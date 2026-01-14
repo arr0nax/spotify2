@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify2 - Free Music Streaming Platform | Listen Online</title>
+    <meta name="description"
+        content="Spotify2 is a modern music streaming platform. Listen to millions of songs, create playlists, and discover new music. Fast, free, and easy to use music player.">
+    <meta name="keywords"
+        content="spotify2, spotify 2, music streaming, online music player, free music, music platform, listen to music, audio player, playlists, music discovery">
+    <meta name="author" content="Spotify2">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Spotify2 - Free Music Streaming Platform">
+    <meta property="og:description"
+        content="Listen to your favorite music with Spotify2. Stream songs, create playlists, and discover new artists.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://spotify2.local">
+    <link rel="canonical" href="https://spotify2.local">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header/Navigation Bar */
+        header {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.7rem 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar::placeholder {
+            color: #b3b3b3;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #1db954;
+            box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+        }
+
+        .search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(29, 185, 84, 0.3);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .search-dropdown.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 0.8rem 1rem;
+            color: #fff;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(29, 185, 84, 0.2);
+            padding-left: 1.2rem;
+        }
+
+        .suggestion-icon {
+            font-size: 1.2rem;
+        }
+
+        .suggestion-text {
+            flex: 1;
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .suggestion-subtitle {
+            font-size: 0.8rem;
+            color: #b3b3b3;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.4);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #b3b3b3;
+            letter-spacing: 1px;
+            padding: 0 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 0.8rem 1.5rem;
+            color: #b3b3b3;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover {
+            color: #fff;
+            background: rgba(29, 185, 84, 0.1);
+            border-left-color: #1db954;
+        }
+
+        .sidebar-link.active {
+            color: #1db954;
+            background: rgba(29, 185, 84, 0.1);
+            border-left-color: #1db954;
+        }
+
+        /* Content wrapper */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 120px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+
+        .btn-login:hover {
+            background: #fff;
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            color: #000;
+        }
+
+        .btn-signup:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(29, 185, 84, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #b3b3b3;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            color: #000;
+            border: none;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(29, 185, 84, 0.5);
+        }
+
+        .btn-secondary {
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #fff;
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        /* Featured Section */
+        .featured {
+            max-width: 1400px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .music-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            display: block;
+        }
+
+        .music-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(29, 185, 84, 0.2);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .card-info {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .card-artist {
+            color: #b3b3b3;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Player Controls */
+        .player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            z-index: 200;
+        }
+
+        .player-content {
+            max-width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .player-song-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .player-album-art {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .player-song-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            font-weight: 600;
+        }
+
+        .player-song-details p {
+            font-size: 0.8rem;
+            color: #b3b3b3;
+        }
+
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .controls-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+        }
+
+        .control-btn:hover {
+            color: #1db954;
+            transform: scale(1.1);
+        }
+
+        .play-pause-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            color: #000;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .play-pause-btn:hover {
+            color: #000;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1db954, #1ed760);
+            border-radius: 2px;
+            width: 35%;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #b3b3b3;
+            margin-top: 0.3rem;
+        }
+
+        .player-right {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            text-align: center;
+            color: #b3b3b3;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .search-container {
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1rem 0;
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                height: auto;
+                display: none;
+            }
+
+            .sidebar-section {
+                display: flex;
+                gap: 2rem;
+                margin-bottom: 0;
+            }
+
+            .sidebar-title {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .music-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-container {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .player-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .player-right {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Header -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">♪ Spotify2</div>
+            <div class="search-container">
+                <input type="text" class="search-bar" id="searchInput" placeholder="Search songs, artists, albums...">
+                <div class="search-dropdown" id="searchDropdown">
+                    <a href="album.html" class="suggestion-item" id="albumSuggestion">
+                        <div class="suggestion-icon">📀</div>
+                        <div class="suggestion-text">
+                            <div class="suggestion-title">Nobody Like You</div>
+                            <div class="suggestion-subtitle">Album by Horsebag</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <a href="album.html" class="btn btn-login">Login</a>
+                <a href="album.html" class="btn btn-signup">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Menu</div>
+                <a href="index.html" class="sidebar-link active">🏠 Home</a>
+                <a href="album.html" class="sidebar-link">🔍 Browse</a>
+                <a href="album.html" class="sidebar-link">❤️ Liked Songs</a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Playlists</div>
+                <a href="album.html" class="sidebar-link">Workout Mix</a>
+                <a href="album.html" class="sidebar-link">Chill Vibes</a>
+                <a href="album.html" class="sidebar-link">Party Hits</a>
+                <a href="album.html" class="sidebar-link">Study Focus</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1>Your Music, Your Way</h1>
+                <p>Stream millions of songs, podcasts, and more. All on Spotify2.</p>
+                <div class="cta-buttons">
+                    <a href="album.html" class="btn-primary">Start Listening Free</a>
+                    <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you"
+                        class="btn-secondary">Start Listening for Money</a>
+                </div>
+            </section>
+
+            <!-- Featured Playlists -->
+            <section class="featured">
+                <h2 class="section-title">Featured Now</h2>
+                <div class="music-grid">
+                    <a href="album.html" class="music-card">
+                        <div class="card-image">🎵</div>
+                        <div class="card-info">
+                            <div class="card-title">Chill Vibes</div>
+                            <div class="card-artist">Relaxing Playlist</div>
+                            <div class="play-btn">▶</div>
+                        </div>
+                    </a>
+
+                    <a href="album.html" class="music-card">
+                        <div class="card-image">🎸</div>
+                        <div class="card-info">
+                            <div class="card-title">Rock Legends</div>
+                            <div class="card-artist">Classic Rock</div>
+                            <div class="play-btn">▶</div>
+                        </div>
+                    </a>
+
+                    <a href="album.html" class="music-card">
+                        <div class="card-image">🎹</div>
+                        <div class="card-info">
+                            <div class="card-title">Jazz Night</div>
+                            <div class="card-artist">Jazz Classics</div>
+                            <div class="play-btn">▶</div>
+                        </div>
+                    </a>
+
+                    <a href="album.html" class="music-card">
+                        <div class="card-image">🎤</div>
+                        <div class="card-info">
+                            <div class="card-title">Hip Hop Hits</div>
+                            <div class="card-artist">Current Trends</div>
+                            <div class="play-btn">▶</div>
+                        </div>
+                    </a>
+
+                    <a href="album.html" class="music-card">
+                        <div class="card-image">🌙</div>
+                        <div class="card-info">
+                            <div class="card-title">Sleep Sounds</div>
+                            <div class="card-artist">Ambient</div>
+                            <div class="play-btn">▶</div>
+                        </div>
+                    </a>
+
+                    <a href="album.html" class="music-card">
+                        <div class="card-image">🚀</div>
+                        <div class="card-info">
+                            <div class="card-title">Electronic</div>
+                            <div class="card-artist">EDM Mix</div>
+                            <div class="play-btn">▶</div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Search dropdown functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchDropdown = document.getElementById('searchDropdown');
+
+        searchInput.addEventListener('focus', () => {
+            searchDropdown.classList.add('active');
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            if (query.length > 0) {
+                searchDropdown.classList.add('active');
+            } else {
+                searchDropdown.classList.remove('active');
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchDropdown.classList.remove('active');
+            }
+        });
+
+        // Close dropdown when clicking on a suggestion
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', () => {
+                searchInput.value = '';
+                searchDropdown.classList.remove('active');
+            });
+        });
+    </script>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; Fuck Spotify</p>
+        <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you">Buy Our Album Here</a>
+    </footer>
+</body>
+
+</html>
