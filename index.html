@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify2 | Horsebag &amp; Dwelling Unit</title>
+    <title>Spotify2 | Horsebag | Dwelling Unit</title>
     <meta name="description"
         content="Listen to Nobody Like You by Horsebag and FOR RENT by Dwelling Unit on Spotify2.">
     <meta name="keywords"
         content="Spotify2, Horsebag, Dwelling Unit, Nobody Like You, FOR RENT, music, albums">
     <meta name="author" content="Spotify2">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Spotify2 | Horsebag &amp; Dwelling Unit">
+    <meta property="og:title" content="Spotify2 | Horsebag | Dwelling Unit">
     <meta property="og:description"
         content="Listen to Nobody Like You by Horsebag and FOR RENT by Dwelling Unit on Spotify2.">
     <meta property="og:type" content="website">
@@ -661,20 +661,21 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="views.css">
 </head>
 
 <body>
     <!-- Navigation Header -->
     <header>
         <nav class="navbar">
-            <div class="logo">♪ Spotify2</div>
+            <a href="index.html" class="logo" aria-label="Spotify2 Home">♪ Spotify2</a>
             <div class="search-container">
                 <input type="text" class="search-bar" id="searchInput" placeholder="Search songs, artists, albums...">
                 <div class="search-dropdown" id="searchDropdown"></div>
             </div>
             <div class="nav-buttons">
-                <a href="#albums" class="btn btn-login">Browse Albums</a>
-                <a href="album.html?id=for-rent" class="btn btn-signup">FOR RENT</a>
+                <a target="_blank" rel="noopener noreferrer" data-album-buy hidden class="btn btn-login">Buy album</a>
+                <a target="_blank" rel="noopener noreferrer" data-album-buy hidden class="btn btn-signup">Buy album</a>
             </div>
         </nav>
     </header>
@@ -685,7 +686,6 @@
             <div class="sidebar-section">
                 <div class="sidebar-title">Menu</div>
                 <a href="index.html" class="sidebar-link active">🏠 Home</a>
-                <a href="#albums" class="sidebar-link">🔍 Browse</a>
             </div>
             <div class="sidebar-section">
                 <div class="sidebar-title">Albums</div>
@@ -698,11 +698,10 @@
             <!-- Hero Section -->
             <section class="hero">
                 <h1>Your Music, Your Way</h1>
-                <p>Listen to Nobody Like You by Horsebag and FOR RENT by Dwelling Unit.</p>
+                <p>Listen to your favorite tracks anytime, anywhere.</p>
                 <div class="cta-buttons">
-                    <a href="#albums" class="btn-primary">Browse Albums</a>
-                    <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you"
-                        class="btn-secondary">Buy Nobody Like You</a>
+                    <a target="_blank" rel="noopener noreferrer" data-album-buy hidden class="btn-primary">Buy album</a>
+                    <a target="_blank" rel="noopener noreferrer" data-album-buy hidden class="btn-secondary">Buy album</a>
                 </div>
             </section>
 
@@ -712,17 +711,18 @@
                 <div class="music-grid" id="albumGrid"></div>
             </section>
         </div>
+        <!-- Footer -->
+        <footer>
+            <p>&copy; Fuck Spotify</p>
+            <a target="_blank" rel="noopener noreferrer" data-album-buy hidden>Buy album</a>
+        </footer>
     </div>
 
     <script src="albums.js" defer></script>
-    <script src="site.js?v=2" defer></script>
+    <script src="player.js" defer></script>
+    <script src="album.js" defer></script>
+    <script src="site.js?v=4" defer></script>
 
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; Fuck Spotify</p>
-        <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you">Buy Nobody Like You</a>
-    </footer>
 </body>
 
 </html>

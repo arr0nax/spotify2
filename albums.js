@@ -2,15 +2,16 @@
 // Add an album here to give it its own album.html?id=your-album-id page.
 // Track src values are paths relative to album.html; null means not uploaded yet.
 (() => {
+    // Home-page purchase buttons and footer promote this album.
+    window.featuredAlbumId = 'for-rent';
     window.albumCatalog = [
         {
             id: 'nobody-like-you',
             title: 'Nobody Like You',
             artist: 'Horsebag',
-            releaseDate: 'January 23, 2026',
+            metadataFile: 'albums/Nobody%20Like%20You/metadata.json',
             cover: 'albums/Nobody%20Like%20You/cover.jpg',
             icon: '🎵',
-            buyUrl: 'https://horsebag.bandcamp.com/album/nobody-like-you',
             tracks: [
                 { title: 'Itchiest Shirt', duration: 133, src: 'albums/Nobody%20Like%20You/01_itchiest_shirt.mp3' },
                 { title: 'Checkout Line', duration: 52, src: 'albums/Nobody%20Like%20You/02_checkout_line.mp3' },
@@ -30,9 +31,9 @@
             id: 'for-rent',
             title: 'FOR RENT',
             artist: 'Dwelling Unit',
+            metadataFile: 'albums/FOR%20RENT/metadata.json',
             cover: 'albums/FOR%20RENT/Cover.jpg',
             icon: '🎵',
-            buyUrl: null,
             tracks: [
                 { title: 'SEXTOY', duration: 149, src: 'albums/FOR%20RENT/1-SEXTOY.mp3' },
                 { title: 'WANTS MORE', duration: 290, src: 'albums/FOR%20RENT/2-WANTS-MORE.mp3' },
@@ -46,6 +47,26 @@
             ]
         }
     ];
+
+    const metadataCache = new Map();
+    window.getAlbumMetadata = album => {
+        if (!album?.metadataFile) return Promise.resolve({ releaseDate: null, buyUrl: null });
+        if (!metadataCache.has(album.id)) {
+            metadataCache.set(album.id, fetch(album.metadataFile)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Could not load metadata for ${album.id}`);
+                    return response.json();
+                })
+                .then(metadata => ({
+                    releaseDate: typeof metadata.releaseDate === 'string' && metadata.releaseDate.trim()
+                        ? metadata.releaseDate.trim() : null,
+                    buyUrl: typeof metadata.buyUrl === 'string' && /^https?:\/\//i.test(metadata.buyUrl.trim())
+                        ? metadata.buyUrl.trim() : null
+                }))
+                .catch(() => ({ releaseDate: null, buyUrl: null })));
+        }
+        return metadataCache.get(album.id);
+    };
 
     window.albumUrl = id => `album.html?id=${encodeURIComponent(id)}`;
 })();
