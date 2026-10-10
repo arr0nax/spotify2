@@ -88,7 +88,8 @@ body { padding-bottom: var(--player-height, 0px); }
     .song-play-btn { opacity: 1; }
     .hero h1 { font-size: 2.5rem; }
     .music-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
-    .cta-buttons { flex-direction: column; }
+    .cta-buttons { display: none; }
+    .featured .section-title { display: none; }
     .player { padding: .75rem 1rem; padding-bottom: max(.75rem, env(safe-area-inset-bottom)); }
     .player-content { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
     .player-song-info { gap: .75rem; }
