@@ -32,7 +32,7 @@
             title: 'FOR RENT',
             artist: 'Dwelling Unit',
             metadataFile: 'albums/FOR%20RENT/metadata.json',
-            cover: 'albums/FOR%20RENT/Cover.jpg',
+            cover: 'albums/FOR%20RENT/cover.jpg',
             icon: '🎵',
             tracks: [
                 { title: 'SEXTOY', duration: 149, src: 'albums/FOR%20RENT/1-SEXTOY.mp3' },

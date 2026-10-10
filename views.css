@@ -17,6 +17,8 @@ body { padding-bottom: var(--player-height, 0px); }
 #playerStatus { font-size: .8rem; color: #b3b3b3; }
 #albumNotFound { padding: 3rem 2rem; }
 #albumNotFound a { color: #1ed760; }
+.suggestion-icon { position: relative; width: 40px; height: 40px; flex-shrink: 0; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1db954, #1ed760); }
+.suggestion-icon .cover-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
 .album-hero { max-width: 1400px; margin: 0 auto; padding: 3rem 2rem; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 3rem; align-items: end; width: 100%; }
 .album-cover { width: 250px; height: 250px; border-radius: 8px; background: linear-gradient(135deg, #1db954, #1ed760); display: flex; align-items: center; justify-content: center; font-size: 5rem; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); overflow: hidden; }

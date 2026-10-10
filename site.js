@@ -219,7 +219,7 @@
             const link = albumLink(album, 'suggestion-item');
             const icon = document.createElement('div');
             icon.className = 'suggestion-icon';
-            icon.textContent = album.icon;
+            addCover(icon, album);
             const text = document.createElement('div');
             text.className = 'suggestion-text';
             const title = document.createElement('div');
