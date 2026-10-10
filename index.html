@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify2 - Free Music Streaming Platform | Listen Online</title>
+    <title>Spotify2 | Horsebag &amp; Dwelling Unit</title>
     <meta name="description"
-        content="Spotify2 is a modern music streaming platform. Listen to millions of songs, create playlists, and discover new music. Fast, free, and easy to use music player.">
+        content="Listen to Nobody Like You by Horsebag and FOR RENT by Dwelling Unit on Spotify2.">
     <meta name="keywords"
-        content="spotify2, spotify 2, music streaming, online music player, free music, music platform, listen to music, audio player, playlists, music discovery">
+        content="Spotify2, Horsebag, Dwelling Unit, Nobody Like You, FOR RENT, music, albums">
     <meta name="author" content="Spotify2">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Spotify2 - Free Music Streaming Platform">
+    <meta property="og:title" content="Spotify2 | Horsebag &amp; Dwelling Unit">
     <meta property="og:description"
-        content="Listen to your favorite music with Spotify2. Stream songs, create playlists, and discover new artists.">
+        content="Listen to Nobody Like You by Horsebag and FOR RENT by Dwelling Unit on Spotify2.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://spotify2.local">
     <link rel="canonical" href="https://spotify2.local">
@@ -181,13 +181,44 @@
         }
 
         .sidebar-link {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             padding: 0.8rem 1.5rem;
             color: #b3b3b3;
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
             cursor: pointer;
+        }
+
+        .sidebar-cover {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+        }
+
+        .sidebar-album-title {
+            min-width: 0;
+        }
+
+        .cover-art {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cover-fallback {
+            font-size: 1.4rem;
+            line-height: 1;
         }
 
         .sidebar-link:hover {
@@ -362,6 +393,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image .cover-fallback {
             font-size: 3rem;
         }
 
@@ -633,19 +670,11 @@
             <div class="logo">♪ Spotify2</div>
             <div class="search-container">
                 <input type="text" class="search-bar" id="searchInput" placeholder="Search songs, artists, albums...">
-                <div class="search-dropdown" id="searchDropdown">
-                    <a href="album.html" class="suggestion-item" id="albumSuggestion">
-                        <div class="suggestion-icon">📀</div>
-                        <div class="suggestion-text">
-                            <div class="suggestion-title">Nobody Like You</div>
-                            <div class="suggestion-subtitle">Album by Horsebag</div>
-                        </div>
-                    </a>
-                </div>
+                <div class="search-dropdown" id="searchDropdown"></div>
             </div>
             <div class="nav-buttons">
-                <a href="album.html" class="btn btn-login">Login</a>
-                <a href="album.html" class="btn btn-signup">Sign Up</a>
+                <a href="#albums" class="btn btn-login">Browse Albums</a>
+                <a href="album.html?id=for-rent" class="btn btn-signup">FOR RENT</a>
             </div>
         </nav>
     </header>
@@ -656,15 +685,11 @@
             <div class="sidebar-section">
                 <div class="sidebar-title">Menu</div>
                 <a href="index.html" class="sidebar-link active">🏠 Home</a>
-                <a href="album.html" class="sidebar-link">🔍 Browse</a>
-                <a href="album.html" class="sidebar-link">❤️ Liked Songs</a>
+                <a href="#albums" class="sidebar-link">🔍 Browse</a>
             </div>
             <div class="sidebar-section">
-                <div class="sidebar-title">Playlists</div>
-                <a href="album.html" class="sidebar-link">Workout Mix</a>
-                <a href="album.html" class="sidebar-link">Chill Vibes</a>
-                <a href="album.html" class="sidebar-link">Party Hits</a>
-                <a href="album.html" class="sidebar-link">Study Focus</a>
+                <div class="sidebar-title">Albums</div>
+                <div id="albumLibrary"></div>
             </div>
         </aside>
 
@@ -673,115 +698,30 @@
             <!-- Hero Section -->
             <section class="hero">
                 <h1>Your Music, Your Way</h1>
-                <p>Stream millions of songs, podcasts, and more. All on Spotify2.</p>
+                <p>Listen to Nobody Like You by Horsebag and FOR RENT by Dwelling Unit.</p>
                 <div class="cta-buttons">
-                    <a href="album.html" class="btn-primary">Start Listening Free</a>
+                    <a href="#albums" class="btn-primary">Browse Albums</a>
                     <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you"
-                        class="btn-secondary">Start Listening for Money</a>
+                        class="btn-secondary">Buy Nobody Like You</a>
                 </div>
             </section>
 
-            <!-- Featured Playlists -->
-            <section class="featured">
-                <h2 class="section-title">Featured Now</h2>
-                <div class="music-grid">
-                    <a href="album.html" class="music-card">
-                        <div class="card-image">🎵</div>
-                        <div class="card-info">
-                            <div class="card-title">Chill Vibes</div>
-                            <div class="card-artist">Relaxing Playlist</div>
-                            <div class="play-btn">▶</div>
-                        </div>
-                    </a>
-
-                    <a href="album.html" class="music-card">
-                        <div class="card-image">🎸</div>
-                        <div class="card-info">
-                            <div class="card-title">Rock Legends</div>
-                            <div class="card-artist">Classic Rock</div>
-                            <div class="play-btn">▶</div>
-                        </div>
-                    </a>
-
-                    <a href="album.html" class="music-card">
-                        <div class="card-image">🎹</div>
-                        <div class="card-info">
-                            <div class="card-title">Jazz Night</div>
-                            <div class="card-artist">Jazz Classics</div>
-                            <div class="play-btn">▶</div>
-                        </div>
-                    </a>
-
-                    <a href="album.html" class="music-card">
-                        <div class="card-image">🎤</div>
-                        <div class="card-info">
-                            <div class="card-title">Hip Hop Hits</div>
-                            <div class="card-artist">Current Trends</div>
-                            <div class="play-btn">▶</div>
-                        </div>
-                    </a>
-
-                    <a href="album.html" class="music-card">
-                        <div class="card-image">🌙</div>
-                        <div class="card-info">
-                            <div class="card-title">Sleep Sounds</div>
-                            <div class="card-artist">Ambient</div>
-                            <div class="play-btn">▶</div>
-                        </div>
-                    </a>
-
-                    <a href="album.html" class="music-card">
-                        <div class="card-image">🚀</div>
-                        <div class="card-info">
-                            <div class="card-title">Electronic</div>
-                            <div class="card-artist">EDM Mix</div>
-                            <div class="play-btn">▶</div>
-                        </div>
-                    </a>
-                </div>
+            <!-- Album cards are generated from the shared catalog. -->
+            <section class="featured" id="albums">
+                <h2 class="section-title">Albums</h2>
+                <div class="music-grid" id="albumGrid"></div>
             </section>
         </div>
     </div>
 
-    <script>
-        // Search dropdown functionality
-        const searchInput = document.getElementById('searchInput');
-        const searchDropdown = document.getElementById('searchDropdown');
-
-        searchInput.addEventListener('focus', () => {
-            searchDropdown.classList.add('active');
-        });
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            if (query.length > 0) {
-                searchDropdown.classList.add('active');
-            } else {
-                searchDropdown.classList.remove('active');
-            }
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-container')) {
-                searchDropdown.classList.remove('active');
-            }
-        });
-
-        // Close dropdown when clicking on a suggestion
-        document.querySelectorAll('.suggestion-item').forEach(item => {
-            item.addEventListener('click', () => {
-                searchInput.value = '';
-                searchDropdown.classList.remove('active');
-            });
-        });
-    </script>
+    <script src="albums.js" defer></script>
+    <script src="site.js?v=2" defer></script>
 
 
     <!-- Footer -->
     <footer>
         <p>&copy; Fuck Spotify</p>
-        <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you">Buy Our Album Here</a>
+        <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you">Buy Nobody Like You</a>
     </footer>
 </body>
 

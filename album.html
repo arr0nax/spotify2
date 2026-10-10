@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Album - MusicFlow</title>
+    <title>Album - Spotify2</title>
+    <link rel="canonical" id="albumCanonical">
     <style>
         * {
             margin: 0;
@@ -51,13 +52,44 @@
         }
 
         .sidebar-link {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             padding: 0.8rem 1.5rem;
             color: #b3b3b3;
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
             cursor: pointer;
+        }
+
+        .sidebar-cover {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+        }
+
+        .sidebar-album-title {
+            min-width: 0;
+        }
+
+        .cover-art {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cover-fallback {
+            font-size: 1.4rem;
+            line-height: 1;
         }
 
         .sidebar-link:hover {
@@ -289,8 +321,8 @@
         }
 
         #player-album-art {
-            height: 100%;
-            width: 100%;
+            height: 50px;
+            width: 50px;
         }
 
         .player-song-details h4 {
@@ -610,6 +642,20 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        [hidden] { display: none !important; }
+        button:disabled, input:disabled { opacity: 0.45; cursor: not-allowed; }
+        :focus-visible { outline: 2px solid #1ed760; outline-offset: 4px; }
+        .album-cover img, .player-album-art img { width: 100%; height: 100%; object-fit: cover; }
+        .player-album-art { overflow: hidden; }
+        .album-description { color: #b3b3b3; margin-bottom: 1.5rem; line-height: 1.5; }
+        .song-item:focus-within .song-play-btn { opacity: 1; }
+        .song-item[aria-disabled="true"] { cursor: default; }
+        .song-item[aria-current="true"] { background: rgba(29, 185, 84, 0.15); }
+        .song-item[aria-disabled="true"] .song-play-btn { opacity: 0.45; }
+        #playerStatus { font-size: 0.8rem; color: #b3b3b3; }
+        #albumNotFound { padding: 3rem 2rem; }
+        #albumNotFound a { color: #1ed760; }
+
         @media (max-width: 1024px) {
             .sidebar {
                 width: 200px;
@@ -698,23 +744,15 @@
     <!-- Navigation Header -->
     <header>
         <nav class="navbar">
-            <a href="index.html" class="logo">♪ Spotify2</a>
+            <a href="index.html" class="logo" aria-label="Spotify2 Home">♪ Spotify2</a>
             <div class="search-container">
-                <input type="text" class="search-bar" id="searchInput" placeholder="Search songs, artists, albums...">
-                <div class="search-dropdown" id="searchDropdown">
-                    <a class="suggestion-item" id="albumSuggestion">
-                        <div class="suggestion-icon">📀</div>
-                        <div class="suggestion-text">
-                            <div class="suggestion-title">Nobody Like You</div>
-                            <div class="suggestion-subtitle">Album by Horsebag</div>
-                        </div>
-                    </a>
-                </div>
+                <input type="search" class="search-bar" id="searchInput" aria-label="Search albums, artists, and songs" placeholder="Search songs, artists, albums...">
+                <div class="search-dropdown" id="searchDropdown"></div>
             </div>
             <div class="nav-buttons">
-                <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you" class="btn btn-login">Buy
+                <a target="_blank" rel="noopener noreferrer" data-album-buy hidden class="btn btn-login">Buy
                     Now</a>
-                <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you" class="btn btn-signup">Buy
+                <a target="_blank" rel="noopener noreferrer" data-album-buy hidden class="btn btn-signup">Buy
                     Now</a>
             </div>
         </nav>
@@ -726,53 +764,52 @@
             <div class="sidebar-section">
                 <div class="sidebar-title">Menu</div>
                 <a href="index.html" class="sidebar-link">🏠 Home</a>
-                <a class="sidebar-link active">🔍 Browse</a>
-                <a class="sidebar-link">❤️ Liked Songs</a>
+                <a href="index.html#albums" class="sidebar-link">🔍 Browse</a>
             </div>
             <div class="sidebar-section">
-                <div class="sidebar-title">Playlists</div>
-                <a class="sidebar-link">Workout Mix</a>
-                <a class="sidebar-link">Chill Vibes</a>
-                <a class="sidebar-link">Party Hits</a>
-                <a class="sidebar-link">Study Focus</a>
+                <div class="sidebar-title">Albums</div>
+                <div id="albumLibrary"></div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <div class="content">
+            <section id="albumNotFound" hidden>
+                <h1>Album not found</h1>
+                <p>This album is not available. <a href="index.html">Return Home</a>.</p>
+            </section>
             <!-- Album Hero Section -->
-            <section class="album-hero">
-                <div class="album-cover">
-                    <img id="album-cover" src="cover.jpg" alt="album cover with lumpy rock that says horsebag: nobody like you">
-                </div>
+            <section class="album-hero" id="albumHero" hidden>
+                <div class="album-cover" id="album-cover"></div>
                 <div class="album-info">
                     <div class="album-type">Album</div>
-                    <h1 class="album-title">Nobody Like You</h1>
-                    <div class="album-artist">By Horsebag</div>
+                    <h1 class="album-title" id="albumTitle"></h1>
+                    <div class="album-artist" id="albumArtist"></div>
                     <div class="album-meta">
                         <div class="meta-item">
                             <span class="meta-label">Release Date</span>
-                            <span class="meta-value">January 23, 2026</span>
+                            <span class="meta-value" id="albumReleaseDate"></span>
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">Total Tracks</span>
-                            <span class="meta-value">12</span>
+                            <span class="meta-value" id="albumTrackCount"></span>
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">Duration</span>
-                            <span class="meta-value">35 min</span>
+                            <span class="meta-value" id="albumDuration"></span>
                         </div>
                     </div>
+                    <p class="album-description" id="albumDescription" hidden></p>
                     <div class="album-actions">
-                        <a class="btn-play" id="albumPlayBtn">▶ Play</a>
-                        <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you" class="btn-like">♡
+                        <button type="button" class="btn-play" id="albumPlayBtn" aria-label="Play album" disabled>▶ Play</button>
+                        <a target="_blank" rel="noopener noreferrer" data-album-buy hidden class="btn-like">♡
                             Buy Now</a>
                     </div>
                 </div>
             </section>
 
             <!-- Songs List -->
-            <section class="songs-container">
+            <section class="songs-container" id="albumTracks" aria-label="Album tracks" hidden>
                 <div class="songs-header">
                     <div>#</div>
                     <div>Title</div>
@@ -781,408 +818,58 @@
                     <div></div>
                 </div>
 
-                <div class="song-item">
-                    <div class="song-number">1</div>
-                    <div class="song-details">
-                        <div class="song-title">Itchiest Shirt</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">2:13</div>
-                    <button class="song-play-btn" data-song="1" data-title="Itchiest Shirt"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">2</div>
-                    <div class="song-details">
-                        <div class="song-title">Checkout Line</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">0:52</div>
-                    <button class="song-play-btn" data-song="2" data-title="Checkout Line"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">3</div>
-                    <div class="song-details">
-                        <div class="song-title">Blood Jockey</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">4:45</div>
-                    <button class="song-play-btn" data-song="3" data-title="Blood Jockey"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">4</div>
-                    <div class="song-details">
-                        <div class="song-title">Todd's Face Is My Face</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">4:03</div>
-                    <button class="song-play-btn" data-song="4" data-title="Todd's Face Is My Face"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">5</div>
-                    <div class="song-details">
-                        <div class="song-title">Opened Your Mail</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">2:38</div>
-                    <button class="song-play-btn" data-song="5" data-title="Opened Your Mail"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">6</div>
-                    <div class="song-details">
-                        <div class="song-title">Lizard With A Knife</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">1:28</div>
-                    <button class="song-play-btn" data-song="6" data-title="Lizard With A Knife"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">7</div>
-                    <div class="song-details">
-                        <div class="song-title">Piss Machine</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">3:35</div>
-                    <button class="song-play-btn" data-song="7" data-title="Piss Machine"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">8</div>
-                    <div class="song-details">
-                        <div class="song-title">Diseased Ape Enclosure</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">2:44</div>
-                    <button class="song-play-btn" data-song="8" data-title="Diseased Ape Enclosure"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">9</div>
-                    <div class="song-details">
-                        <div class="song-title">Lump Talk</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">1:58</div>
-                    <button class="song-play-btn" data-song="9" data-title="Lump Talk" data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">10</div>
-                    <div class="song-details">
-                        <div class="song-title">Riding on the Back of a Bug</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">1:50</div>
-                    <button class="song-play-btn" data-song="10" data-title="Riding on the Back of a Bug"
-                        data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">11</div>
-                    <div class="song-details">
-                        <div class="song-title">Saturate</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">5:36</div>
-                    <button class="song-play-btn" data-song="11" data-title="Saturate" data-artist="Horsebag">▶</button>
-                </div>
-
-                <div class="song-item">
-                    <div class="song-number">12</div>
-                    <div class="song-details">
-                        <div class="song-title">Timeclown</div>
-                        <div class="song-artist">Horsebag</div>
-                    </div>
-                    <div class="song-album">Nobody Like You</div>
-                    <div class="song-duration">3:43</div>
-                    <button class="song-play-btn" data-song="12" data-title="Timeclown"
-                        data-artist="Horsebag">▶</button>
-                </div>
+                <div id="trackList"></div>
+            </section>
         </div>
     </div>
 
     <!-- Audio Element -->
-    <audio id="audioPlayer" style="display: none;"></audio>
+    <audio id="audioPlayer" preload="metadata" hidden></audio>
 
     <!-- Player Controls -->
-    <div class="player">
+    <div class="player" id="albumPlayer" role="region" aria-label="Audio player" hidden>
         <div class="player-content">
             <div class="player-song-info">
-                <div class="player-album-art">
-                    <img id="player-album-art" src="cover.jpg"/>
-                </div>
+                <div class="player-album-art" id="player-album-art"></div>
                 <div class="player-song-details">
-                    <h4 id="playerTitle">No Song Playing</h4>
-                    <p id="playerArtist">Add an MP3 file to start</p>
+                    <h4 id="playerTitle">No playable tracks</h4>
+                    <p id="playerArtist"></p>
                 </div>
             </div>
             <div class="player-controls">
                 <div class="controls-buttons">
-                    <button class="control-btn" id="prevBtn">⏮️</button>
-                    <button class="control-btn play-pause-btn" id="playBtn">▶</button>
-                    <button class="control-btn" id="nextBtn">⏭️</button>
+                    <button type="button" class="control-btn" id="prevBtn" aria-label="Previous track" disabled>⏮️</button>
+                    <button type="button" class="control-btn play-pause-btn" id="playBtn" aria-label="Play" disabled>▶</button>
+                    <button type="button" class="control-btn" id="nextBtn" aria-label="Next track" disabled>⏭️</button>
                 </div>
-                <div class="progress-bar" id="progressBar">
+                <div class="progress-bar" id="progressBar" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-disabled="true" tabindex="-1">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
                 <div class="time-display">
                     <span id="currentTime">0:00</span>
                     <span id="duration">0:00</span>
                 </div>
+                <p id="playerStatus" role="status" aria-live="polite" aria-atomic="true"></p>
             </div>
             <div class="player-right">
                 <div class="volume-control">
-                    <button class="control-btn">🔊</button>
+                    <button type="button" class="control-btn" id="muteBtn" aria-label="Mute" aria-pressed="false" disabled>🔊</button>
                     <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="70"
-                        style="cursor: pointer;">
+                        aria-label="Volume" disabled style="cursor: pointer;">
                 </div>
-                <button class="control-btn">≡</button>
+                <button type="button" class="control-btn" id="showTracksBtn" aria-label="Show track list">≡</button>
             </div>
         </div>
     </div>
 
-    <script>
-        const audioPlayer = document.getElementById('audioPlayer');
-        const playBtn = document.getElementById('playBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationEl = document.getElementById('duration');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const playerTitle = document.getElementById('playerTitle');
-        const playerArtist = document.getElementById('playerArtist');
-
-        // Format time (MM:SS)
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-
-        // Song file mapping
-        const songFiles = {
-            '1': '01_itchiest_shirt.mp3',
-            '2': '02_checkout_line.mp3',
-            '3': '03_blood_jockey.mp3',
-            '4': '04_todds_face_is_my_face.mp3',
-            '5': '05_opened_your_mail.mp3',
-            '6': '06_lizard_with_a_knife.mp3',
-            '7': '07_piss_machine.mp3',
-            '8': '08_diseased_ape_enclosure.mp3',
-            '9': '09_lump_talk.mp3',
-            '10': '10_riding_on_the_back_of_a_bug.mp3',
-            '11': '11_saturate.mp3',
-            '12': '12_timeclown.mp3'
-        };
-
-        // Album play button - play first song
-        const albumPlayBtn = document.getElementById('albumPlayBtn');
-        if (albumPlayBtn) {
-            albumPlayBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                playSong('1', 'Itchiest Shirt', 'Horsebag');
-            });
-        }
-
-        // Track currently playing song
-        let currentSongNum = null;
-
-        // Helper function to play a song
-        function playSong(songNum, title, artist, autoPlay = true) {
-            const fileName = songFiles[songNum];
-            audioPlayer.src = `nobody_like_you/${fileName}`;
-            playerTitle.textContent = title;
-            playerArtist.textContent = artist;
-            currentSongNum = songNum;
-            if (autoPlay) {
-                audioPlayer.play();
-                playBtn.textContent = '⏸';
-            } else {
-                playBtn.textContent = '▶';
-            }
-        }
-
-        // Play next song automatically when current one ends
-        audioPlayer.addEventListener('ended', () => {
-            if (currentSongNum && currentSongNum < 12) {
-                // Get the next song number
-                const nextSongNum = String(parseInt(currentSongNum) + 1);
-                const nextBtn = document.querySelector(`[data-song="${nextSongNum}"]`);
-                if (nextBtn) {
-                    const title = nextBtn.getAttribute('data-title');
-                    const artist = nextBtn.getAttribute('data-artist');
-                    playSong(nextSongNum, title, artist);
-                }
-            } else {
-                // Last song finished, reset play button
-                playBtn.textContent = '▶';
-            }
-        });
-
-        // Load and play song from button click
-        const songPlayBtns = document.querySelectorAll('.song-play-btn');
-        songPlayBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const songNum = btn.getAttribute('data-song');
-                const title = btn.getAttribute('data-title');
-                const artist = btn.getAttribute('data-artist');
-                playSong(songNum, title, artist);
-            });
-        });
-
-        // Load and play song from clicking on the track itself
-        const songItems = document.querySelectorAll('.song-item');
-        songItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                // Don't trigger if clicking the button (button has its own listener)
-                if (e.target.classList.contains('song-play-btn')) return;
-
-                const playBtn = item.querySelector('.song-play-btn');
-                const songNum = playBtn.getAttribute('data-song');
-                const title = playBtn.getAttribute('data-title');
-                const artist = playBtn.getAttribute('data-artist');
-                playSong(songNum, title, artist);
-            });
-        });
-
-        // Play/Pause toggle
-        playBtn.addEventListener('click', () => {
-            if (audioPlayer.src) {
-                if (audioPlayer.paused) {
-                    audioPlayer.play();
-                    playBtn.textContent = '⏸';
-                } else {
-                    audioPlayer.pause();
-                    playBtn.textContent = '▶';
-                }
-            }
-        });
-
-        // Previous button - skip to previous song
-        const prevBtn = document.getElementById('prevBtn');
-        prevBtn.addEventListener('click', () => {
-            if (currentSongNum && currentSongNum > 1) {
-                const prevSongNum = String(parseInt(currentSongNum) - 1);
-                const prevButton = document.querySelector(`[data-song="${prevSongNum}"]`);
-                if (prevButton) {
-                    const title = prevButton.getAttribute('data-title');
-                    const artist = prevButton.getAttribute('data-artist');
-                    playSong(prevSongNum, title, artist);
-                }
-            }
-        });
-
-        // Next button - skip to next song
-        const nextBtn = document.getElementById('nextBtn');
-        nextBtn.addEventListener('click', () => {
-            if (currentSongNum && currentSongNum < 12) {
-                const nextSongNum = String(parseInt(currentSongNum) + 1);
-                const nextButton = document.querySelector(`[data-song="${nextSongNum}"]`);
-                if (nextButton) {
-                    const title = nextButton.getAttribute('data-title');
-                    const artist = nextButton.getAttribute('data-artist');
-                    playSong(nextSongNum, title, artist);
-                }
-            }
-        });
-
-        // Update progress bar
-        audioPlayer.addEventListener('timeupdate', () => {
-            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-            progressFill.style.width = progress + '%';
-            currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
-        });
-
-        // Update duration when metadata loads
-        audioPlayer.addEventListener('loadedmetadata', () => {
-            durationEl.textContent = formatTime(audioPlayer.duration);
-        });
-
-        // Seek on progress bar click
-        progressBar.addEventListener('click', (e) => {
-            if (audioPlayer.src) {
-                const rect = progressBar.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                audioPlayer.currentTime = percent * audioPlayer.duration;
-            }
-        });
-
-        // Volume control
-        volumeSlider.addEventListener('input', (e) => {
-            audioPlayer.volume = e.target.value / 100;
-        });
-
-        // Set initial volume
-        audioPlayer.volume = 0.7;
-
-        // Search dropdown functionality
-        const searchInput = document.getElementById('searchInput');
-        const searchDropdown = document.getElementById('searchDropdown');
-
-        searchInput.addEventListener('focus', () => {
-            searchDropdown.classList.add('active');
-        });
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            if (query.length > 0) {
-                searchDropdown.classList.add('active');
-            } else {
-                searchDropdown.classList.remove('active');
-            }
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-container')) {
-                searchDropdown.classList.remove('active');
-            }
-        });
-
-        // Close dropdown when clicking on a suggestion
-        document.querySelectorAll('.suggestion-item').forEach(item => {
-            item.addEventListener('click', () => {
-                searchInput.value = '';
-                searchDropdown.classList.remove('active');
-            });
-        });
-
-        // Load first song when page loads
-        window.addEventListener('load', () => {
-            playSong('1', 'Itchiest Shirt', 'Horsebag', false);
-        });
-    </script>
+    <script defer src="albums.js"></script>
+    <script defer src="site.js?v=2"></script>
+    <script defer src="album.js"></script>
 
     <!-- Footer -->
     <footer>
         <p>&copy; Fuck Spotify</p>
-        <a target="_blank" href="https://horsebag.bandcamp.com/album/nobody-like-you">Buy Our Album Here</a>
+        <a target="_blank" rel="noopener noreferrer" data-album-buy hidden>Buy This Album Here</a>
     </footer>
 </body>
 
